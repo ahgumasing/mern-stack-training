@@ -1,10 +1,7 @@
 const express = require('express');
-const morgan = require('morgan');
-
 const app = express();
 
-app.get('/', (req, res) => {
-    res.json({ name: 'Bechon' });
-});
+const userRouter = require('./routes/userRoutes');
 
+app.use('/api/v1/users', userRouter);
 module.exports = app;
