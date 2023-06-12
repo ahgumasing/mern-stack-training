@@ -20,6 +20,16 @@ exports.getUser = async (req, res) => {
     });
 };
 
+exports.deleteUser = async (req, res) => {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    res.json({
+        data: {
+            user,
+        },
+    });
+};
+
 exports.getAllUsers = async (req, res) => {
     const users = await User.find();
 
