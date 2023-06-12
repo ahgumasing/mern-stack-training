@@ -20,6 +20,18 @@ exports.getUser = async (req, res) => {
     });
 };
 
+exports.updateUser = async (req, res) => {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+    });
+
+    res.json({
+        data: {
+            user,
+        },
+    });
+};
+
 exports.deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(req.params.id);
 
