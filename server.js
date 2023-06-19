@@ -15,7 +15,10 @@ mongoose
         useCreateIndex: true,
         useFindAndModify: false,
     })
-    .then(() => console.log('database connected succesfully'));
+    .then(() => console.log('database connected succesfully'))
+    .catch((err) => {
+        console.log('Not Connected to Database ERROR! ', err);
+    });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
