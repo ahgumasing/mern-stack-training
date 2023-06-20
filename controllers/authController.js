@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const { promisify } = require('util');
 const User = require('./../models/userModel');
 
 const signToken = (id) => {
@@ -8,7 +8,7 @@ const signToken = (id) => {
     });
 };
 
-exports.signUp = async (req, res, next) => {
+exports.signUp = async (req, res) => {
     try {
         const newUser = await User.create({
             name: req.body.name,
@@ -27,8 +27,10 @@ exports.signUp = async (req, res, next) => {
             },
         });
     } catch (error) {
-        res.json({
-            error,
+        res.status(401).json({
+            error: {
+                message: 'Cannot sign up',
+            },
         });
     }
 };
@@ -50,4 +52,37 @@ exports.login = async (req, res, next) => {
         status: 'sucess',
         token,
     });
+};
+
+exports.protect = async (req, res, next) => {
+    let token;
+
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+        return next(
+            res.status(401).json({
+                message: 'You are not logged in.',
+            })
+        );
+    }
+
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    const freshUser = await User.findById(decoded.id);
+
+    if (!freshUser) {
+        res.status(401).json({
+            message: 'Token does no longer exists.',
+        });
+    }
+
+    // freshUser.changePasswordAfter(decoded.iat);
+
+    next();
 };

@@ -30,7 +30,7 @@ exports.updateUser = async (req, res) => {
         new: true,
     });
 
-    res.json({
+    res.status(200).json({
         data: {
             user,
         },
